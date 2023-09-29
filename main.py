@@ -15,6 +15,11 @@ from auth.database import User
 from auth.manager import get_user_manager
 from auth.schemas import UserRead, UserCreate
 
+from database import engine
+from models.models import announcement
+from sqlalchemy.orm import sessionmaker
+from announcement.schemas import AnnouncementCreate, AnnouncementUpdate, CommentCreate, CommentUpdate
+
 app = FastAPI(
     title="Trading App"
 )
@@ -38,9 +43,11 @@ app.include_router(
 
 current_user = fastapi_users.current_user()
 
-@app.get("/protected-route")
+@app.get("/announcement")
 def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.username}"
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session.query(announcement).all()
 
 
 @app.get("/unprotected-route")
