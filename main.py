@@ -18,6 +18,7 @@ from auth.schemas import UserRead, UserCreate
 from database import engine
 from models.models import announcement
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import update, select
 from announcement.schemas import AnnouncementCreate, AnnouncementUpdate, CommentCreate, CommentUpdate
 
 app = FastAPI(
@@ -45,9 +46,9 @@ current_user = fastapi_users.current_user()
 
 @app.get("/announcement")
 def announcement_list(user: User = Depends(current_user)):
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    return session.query(announcement).all()
+    conn = engine.connect()
+    result = conn.execute(announcement.select())
+    return result.fetchall()
 
 
 @app.post("/announcement/add")
@@ -66,11 +67,11 @@ def announcement_add(new_announcement: AnnouncementCreate, user: User = Depends(
     result = conn.execute(query)
     return result
 
-@app.post("/announcement/edit/{announcement_id}")
+@app.put("/announcement/edit/{announcement_id}")
 def announcement_edit(announcement_id: int, edit_announcement: AnnouncementUpdate, user: User = Depends(current_user)):
-
-    query = announcement.insert().values(
-        id=edit_announcement.id,
+    query = update(announcement).where(
+        announcement.c.id == announcement_id
+    ).values(
         user_id=edit_announcement.user_id,
         title=edit_announcement.title,
         subtitle=edit_announcement.subtitle,
@@ -81,7 +82,3 @@ def announcement_edit(announcement_id: int, edit_announcement: AnnouncementUpdat
     conn = engine.connect()
     result = conn.execute(query)
     return result
-
-@app.get("/unprotected-route")
-def unprotected_route():
-    return f"Hello, anonym"
