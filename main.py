@@ -44,14 +44,14 @@ app.include_router(
 current_user = fastapi_users.current_user()
 
 @app.get("/announcement")
-def protected_route(user: User = Depends(current_user)):
+def announcement(user: User = Depends(current_user)):
     Session = sessionmaker(bind=engine)
     session = Session()
     return session.query(announcement).all()
 
 
 @app.post("/announcement/add")
-def protected_route(new_announcement: AnnouncementCreate, user: User = Depends(current_user)):
+def announcement_add(new_announcement: AnnouncementCreate, user: User = Depends(current_user)):
 
     query = announcement.insert().values(
         id=new_announcement.id,
@@ -66,8 +66,8 @@ def protected_route(new_announcement: AnnouncementCreate, user: User = Depends(c
     result = conn.execute(query)
     return result
 
-@app.post("/announcement/update/{announcement_id}")
-def protected_route(announcement_id: int, edit_announcement: AnnouncementUpdate, user: User = Depends(current_user)):
+@app.post("/announcement/edit/{announcement_id}")
+def announcement_edit(announcement_id: int, edit_announcement: AnnouncementUpdate, user: User = Depends(current_user)):
 
     query = announcement.insert().values(
         id=edit_announcement.id,
