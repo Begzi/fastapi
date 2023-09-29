@@ -66,6 +66,22 @@ def protected_route(new_announcement: AnnouncementCreate, user: User = Depends(c
     result = conn.execute(query)
     return result
 
+@app.post("/announcement/update/{announcement_id}")
+def protected_route(announcement_id: int, edit_announcement: AnnouncementUpdate, user: User = Depends(current_user)):
+
+    query = announcement.insert().values(
+        id=edit_announcement.id,
+        user_id=edit_announcement.user_id,
+        title=edit_announcement.title,
+        subtitle=edit_announcement.subtitle,
+        text=edit_announcement.text,
+        is_hidden=edit_announcement.is_hidden,
+    )
+
+    conn = engine.connect()
+    result = conn.execute(query)
+    return result
+
 @app.get("/unprotected-route")
 def unprotected_route():
     return f"Hello, anonym"
