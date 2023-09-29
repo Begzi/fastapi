@@ -18,7 +18,7 @@ from auth.schemas import UserRead, UserCreate
 from database import engine
 from models.models import announcement
 from sqlalchemy import update, delete
-from announcement.schemas import AnnouncementCreate, AnnouncementUpdate, CommentCreate, CommentUpdate
+from announcement.schemas import AnnouncementCreate, AnnouncementEdit, CommentCreate, CommentUpdate
 
 app = FastAPI(
     title="Trading App"
@@ -52,7 +52,6 @@ def announcement_list(user: User = Depends(current_user)):
 
 @app.post("/announcement/add")
 def announcement_add(new_announcement: AnnouncementCreate, user: User = Depends(current_user)):
-
     query = announcement.insert().values(
         id=new_announcement.id,
         user_id=new_announcement.user_id,
@@ -67,7 +66,7 @@ def announcement_add(new_announcement: AnnouncementCreate, user: User = Depends(
     return result
 
 @app.put("/announcement/edit/{announcement_id}")
-def announcement_edit(announcement_id: int, edit_announcement: AnnouncementUpdate, user: User = Depends(current_user)):
+def announcement_edit(announcement_id: int, edit_announcement: AnnouncementEdit, user: User = Depends(current_user)):
     query = update(announcement).where(
         announcement.c.id == announcement_id
     ).values(

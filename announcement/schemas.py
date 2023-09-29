@@ -10,7 +10,7 @@ class AnnouncementCreate(BaseModel):
     is_hidden: bool
 
 
-class AnnouncementUpdate(BaseModel):
+class AnnouncementEdit(BaseModel):
     user_id: int
     title: str
     subtitle: str
