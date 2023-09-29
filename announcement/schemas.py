@@ -11,7 +11,6 @@ class AnnouncementCreate(BaseModel):
 
 
 class AnnouncementUpdate(BaseModel):
-    id: int
     user_id: int
     title: str
     subtitle: str
