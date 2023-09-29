@@ -1,14 +1,7 @@
-from datetime import datetime
-from enum import Enum
-from typing import List, Optional, Union
+from fastapi_users import FastAPIUsers
 
-from fastapi_users import fastapi_users, FastAPIUsers
-from pydantic import BaseModel, Field
-
-from fastapi import FastAPI, Request, status, Depends
-from fastapi.encoders import jsonable_encoder
+from fastapi import FastAPI, Depends
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 
 from auth.auth import auth_backend
 from auth.database import User
@@ -17,7 +10,7 @@ from auth.schemas import UserRead, UserCreate
 
 from database import engine
 from models.models import announcement
-from sqlalchemy import update, delete
+from sqlalchemy import update, delete, insert
 from announcement.schemas import AnnouncementCreate, AnnouncementEdit, CommentCreate, CommentUpdate
 
 app = FastAPI(
@@ -52,7 +45,7 @@ def announcement_list(user: User = Depends(current_user)):
 
 @app.post("/announcement/add")
 def announcement_add(new_announcement: AnnouncementCreate, user: User = Depends(current_user)):
-    query = announcement.insert().values(
+    query = insert(announcement).values(
         id=new_announcement.id,
         user_id=new_announcement.user_id,
         title=new_announcement.title,
