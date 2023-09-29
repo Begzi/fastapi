@@ -17,8 +17,7 @@ from auth.schemas import UserRead, UserCreate
 
 from database import engine
 from models.models import announcement
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import update, select
+from sqlalchemy import update, delete
 from announcement.schemas import AnnouncementCreate, AnnouncementUpdate, CommentCreate, CommentUpdate
 
 app = FastAPI(
@@ -78,6 +77,15 @@ def announcement_edit(announcement_id: int, edit_announcement: AnnouncementUpdat
         text=edit_announcement.text,
         is_hidden=edit_announcement.is_hidden,
     )
+
+    conn = engine.connect()
+    result = conn.execute(query)
+    return result
+
+
+@app.delete("/announcement/delete/{announcement_id}")
+def announcement_delete(announcement_id: int, user: User = Depends(current_user)):
+    query = delete(announcement). where(announcement.c.id == announcement_id)
 
     conn = engine.connect()
     result = conn.execute(query)
