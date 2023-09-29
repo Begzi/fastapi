@@ -44,7 +44,7 @@ app.include_router(
 current_user = fastapi_users.current_user()
 
 @app.get("/announcement")
-def announcement(user: User = Depends(current_user)):
+def announcement_list(user: User = Depends(current_user)):
     Session = sessionmaker(bind=engine)
     session = Session()
     return session.query(announcement).all()
